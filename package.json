@@ -1,0 +1,22 @@
+{
+  "name": "gb-server",
+  "module": "src/index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "./scripts/build.sh",
+    "deploy": "./scripts/deploy.sh",
+    "test": "./scripts/test.sh",
+    "clean": "rm -rf .aws-sam",
+    "dev": "npm run build && npm run test"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "mongodb": "^6.20.0"
+  }
+}

@@ -38,7 +38,21 @@ bower_components
 build/Release
 
 # Dependency directories
-node_modules/
+node_modules
+dist
+
+*.log
+*.env*
+!.env.example
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+terraform.tfvars
+# main.tf is explicitly allowed
+
 jspm_packages/
 
 # Snowpack dependency directory (https://snowpack.dev/)
