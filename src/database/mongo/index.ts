@@ -7,7 +7,9 @@ let mongoClient: MongoClient | null = null;
 let cachedDb: Db | null = null;
 
 export const getDatabase = async (): Promise<Db> => {
+  logger.info("Getting MongoDB database instance");
   if (cachedDb) {
+    logger.info("Returning cached MongoDB database instance");
     return cachedDb;
   }
 
@@ -20,6 +22,7 @@ export const getDatabase = async (): Promise<Db> => {
   cachedDb = mongoClient.db(Bun.env.MONGODB!);
 
   if (!cachedDb) {
+    logger.error("Failed to initialize MongoDB database instance");
     throw new Error("Failed to initialize MongoDB database instance");
   }
 

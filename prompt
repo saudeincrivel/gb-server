@@ -1,0 +1,56 @@
+In src there is a boilerplate implementaiton of an event based architecture
+
+The events written are not representative of the apps context. The boilerplate has payments context but this will be a blog's backend server, to post and serve original content.
+
+
+All events: 
+About posts we want to:
+- (admin)create a post:
+- (public)get posts delta // will get posts newer than the last sync date
+- (admin)update a post
+- (public)get a post 
+- (public)subscribe to news-leter
+- (public)get all posts
+- (public)get posts with filter
+
+About the admin we simply want to 
+- (public)connect // event that accepts email and password and returns a token
+
+Collections will be: 
+- posts
+- admin // collection with a single doc that will have the admin user data (email and password)
+- emails // collection with users email data
+- socials // collection with single doc that will have the socials data
+- subscriptions // collection with users subscriptions data
+
+
+Collections schema:
+
+POST :
+id: string
+name: string
+description?: string
+Tags? string[]
+links?:Array<{link:string, type:string, metadata:any}>
+images :Array<{link:string, type:string: metadata:any}>
+postal: Number
+published: Boolean
+views: Number
+createdAt: Date
+updatedAt: Date
+publishedAt: Date
+
+Admin:
+name: string
+email: string
+password: string
+token: string
+createdAt: Date
+updatedAt: Date
+
+
+Subscriptions:
+id: string
+email: string
+createdAt: Date
+ 
