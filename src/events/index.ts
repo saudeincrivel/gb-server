@@ -2,6 +2,7 @@ import { Db } from "mongodb";
 import { Logger } from "../common/logs/logger";
 import { AdminConnectHandler } from "./admin/admin-connect";
 import { NewsletterSubscribeHandler } from "./news-letter/newsletter-subscribe";
+import { GetMediaHandler } from "./media/get-media";
 import { PostCreateHandler } from "./posts/post-create";
 import { PostGetHandler } from "./posts/post-get";
 import { PostUpdateHandler } from "./posts/post-update";
@@ -27,6 +28,9 @@ export class EventHandlers {
       [EventType.POSTS_GET_ALL]: new PostsGetAllHandler(db),
       [EventType.POSTS_GET_DELTA]: new PostsGetDeltaHandler(db),
       [EventType.POSTS_GET_FILTERED]: new PostsGetFilteredHandler(db),
+
+      // Media related handlers
+      [EventType.GET_MEDIA]: new GetMediaHandler(db),
 
       // Admin related handlers
       [EventType.ADMIN_CONNECT]: new AdminConnectHandler(db),

@@ -7,6 +7,9 @@ export enum EventType {
   POSTS_GET_DELTA = "posts_get_delta",
   POSTS_GET_FILTERED = "posts_get_filtered",
   
+  // Media related events
+  GET_MEDIA = "get_media",
+  
   // Admin related events
   ADMIN_CONNECT = "admin_connect",
   

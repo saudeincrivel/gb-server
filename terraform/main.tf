@@ -24,6 +24,15 @@ resource "aws_apigatewayv2_api" "gb_server" {
   }
 }
 
+resource "aws_s3_bucket_public_access_block" "media_bucket" {
+  bucket = aws_s3_bucket.media_bucket.id
+
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
+}
+
 # API Gateway Stage
 resource "aws_apigatewayv2_stage" "gb_server" {
   api_id      = aws_apigatewayv2_api.gb_server.id
@@ -106,6 +115,7 @@ resource "aws_lambda_function" "gb_server" {
 
       ECR_REPO_NAME        = "gb-server"
       LAMBDA_FUNCTION_NAME = "gb-server"
+      MEDIA_BUCKET_NAME    = aws_s3_bucket.media_bucket.bucket
     }
   }
 
@@ -184,5 +194,97 @@ output "api_gateway_url" {
 
 output "api_gateway_arn" {
   value = aws_apigatewayv2_api.gb_server.arn
+}
+
+# S3 bucket for media storage
+resource "aws_s3_bucket" "media_bucket" {
+  bucket = "gb-media-6pfmll2h"
+
+  tags = {
+    Name        = "GB Media Storage"
+    Environment = "production"
+  }
+}
+
+# S3 bucket ACL
+resource "aws_s3_bucket_ownership_controls" "media_bucket" {
+  bucket = aws_s3_bucket.media_bucket.id
+  rule {
+    object_ownership = "BucketOwnerPreferred"
+  }
+}
+
+resource "aws_s3_bucket_acl" "media_bucket" {
+  depends_on = [aws_s3_bucket_ownership_controls.media_bucket]
+  bucket     = aws_s3_bucket.media_bucket.id
+  acl        = "private"
+}
+
+# S3 bucket CORS configuration
+resource "aws_s3_bucket_cors_configuration" "media_bucket" {
+  bucket = aws_s3_bucket.media_bucket.id
+
+  cors_rule {
+    allowed_headers = ["*"]
+    allowed_methods = ["GET", "PUT", "POST", "DELETE"]
+    allowed_origins = ["*"] # In production, restrict to your domain
+    expose_headers  = ["ETag"]
+    max_age_seconds = 3000
+  }
+}
+
+# S3 bucket public access
+resource "aws_s3_bucket_policy" "media_bucket_public_read" {
+  bucket = aws_s3_bucket.media_bucket.id
+  depends_on = [aws_s3_bucket_public_access_block.media_bucket]
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid      = "AllowPublicReadAccess",
+        Effect   = "Allow",
+        Principal = "*",
+        Action   = "s3:GetObject",
+        Resource = "${aws_s3_bucket.media_bucket.arn}/*"
+      }
+    ]
+  })
+}
+
+
+# IAM policy for Lambda to access S3
+resource "aws_iam_role_policy" "lambda_s3" {
+  name = "gb-server-s3-policy"
+  role = aws_iam_role.lambda_exec.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:GetObject",
+          "s3:PutObject",
+          "s3:DeleteObject",
+          "s3:ListBucket"
+        ]
+        Resource = [
+          aws_s3_bucket.media_bucket.arn,
+          "${aws_s3_bucket.media_bucket.arn}/*"
+        ]
+      }
+    ]
+  })
+}
+
+# Output the S3 bucket name
+output "media_bucket_name" {
+  value = aws_s3_bucket.media_bucket.bucket
+}
+
+# Output the S3 bucket domain name
+output "media_bucket_domain_name" {
+  value = aws_s3_bucket.media_bucket.bucket_regional_domain_name
 }
 

@@ -6,14 +6,21 @@ export interface Post {
   name: string;
   description?: string;
   tags?: string[];
-  links?: Array<{link: string; type: string; metadata: any}>;
-  images: Array<{link: string; type: string; metadata: any}>;
+  medias: Array<Media>;
   postal: number;
   published: boolean;
   views: number;
   createdAt: Date;
   updatedAt: Date;
   publishedAt?: Date;
+}
+
+export interface Media {
+  id: string;
+  url: string;
+  type: 'image' | 'video';
+  s3Key: string;
+  metadata: any;
 }
 
 export interface Admin {

@@ -8,8 +8,16 @@ export interface PostCreateEvent extends BaseEvent {
   name: string;
   description?: string;
   tags?: string[];
-  links?: Array<{link: string; type: string; metadata: any}>;
-  images: Array<{link: string; type: string; metadata: any}>;
+  // For backward compatibility with existing posts
+  images?: Array<{link: string; type: string; metadata: any}>;
+  // New field for uploaded media files
+  mediaFiles?: Array<{
+    name: string;
+    type: string;
+    size: number;
+    content: Buffer;
+    metadata: any;
+  }>;
   postal?: number;
   published?: boolean;
 }
@@ -19,8 +27,16 @@ export interface PostUpdateEvent extends BaseEvent {
   name?: string;
   description?: string;
   tags?: string[];
-  links?: Array<{link: string; type: string; metadata: any}>;
+  // For backward compatibility with existing posts
   images?: Array<{link: string; type: string; metadata: any}>;
+  // New field for uploaded media files
+  mediaFiles?: Array<{
+    name: string;
+    type: string;
+    size: number;
+    content: Buffer;
+    metadata: any;
+  }>;
   postal?: number;
   published?: boolean;
 }
