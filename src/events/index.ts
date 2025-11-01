@@ -53,8 +53,9 @@ export class EventHandlers {
         logger.warn(`Unknown event type: ${eventType}`);
         throw new Error(`Unknown event type: ${eventType}`);
       }
-
-      return await handler.handle(event);
+      const result = await handler.handle(event);
+      logger.info("Result: ", result);
+      return result;
     } catch (error) {
       logger.error(`Error handling event ${eventType}:`, error);
       throw error;
