@@ -1,8 +1,6 @@
 import { Db } from "mongodb";
-import { createHash } from "crypto";
 import { Logger } from "../../common/logs/logger";
 import { COLLECTIONS } from "../../database/schemas";
-import type { Admin } from "../../database/schemas";
 import type { EventHandler } from "../types/event-handler";
 import type { AdminConnectEvent } from "../types/schemas";
 
@@ -21,7 +19,6 @@ export class AdminConnectHandler implements EventHandler {
     logger.info("Admin connection attempt", { email: event.email });
 
     try {
-      // Find admin by email
       const admin = await this.db
         .collection(COLLECTIONS.ADMIN)
         .findOne({ email: event.email });
@@ -31,16 +28,13 @@ export class AdminConnectHandler implements EventHandler {
         return { success: false, message: "Invalid credentials" };
       }
 
-      // Check if password matches
       if (admin.password !== event.password) {
         logger.warn("Invalid password for admin", { email: event.email });
         return { success: false, message: "Invalid credentials" };
       }
 
-      // Generate a new token
       const token = this.generateToken();
 
-      // Update admin with new token
       await this.db.collection(COLLECTIONS.ADMIN).updateOne(
         { email: event.email },
         {
@@ -59,7 +53,6 @@ export class AdminConnectHandler implements EventHandler {
     }
   }
 
-  // Generate a random token
   private generateToken(): string {
     const randomBytes = crypto.getRandomValues(new Uint8Array(32));
     return Array.from(randomBytes)

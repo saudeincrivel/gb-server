@@ -16,3 +16,4 @@ export enum EventType {
   // Newsletter related events
   NEWSLETTER_SUBSCRIBE = "newsletter_subscribe"
 }
+ 

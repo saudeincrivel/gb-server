@@ -89,6 +89,7 @@ print_status "❗ Errors will be logged to: $ERROR_LOG"
 exec 1> >(tee -a "$LOG_FILE")
 exec 2> >(tee -a "$ERROR_LOG" >&2)
 
+AWS_REGION=${AWS_REGION:-"sa-east-1"}
 print_status "🔍 Getting AWS account information..."
 AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
 ECR_URI="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO_NAME}"

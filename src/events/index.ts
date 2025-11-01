@@ -11,6 +11,7 @@ import { PostsGetDeltaHandler } from "./posts/posts-get-delta";
 import { PostsGetFilteredHandler } from "./posts/posts-get-filtered";
 import type { EventHandler } from "./types/event-handler";
 import { EventType } from "./types/event-type";
+import { safeParseJson } from "../common/utils";
 
 const logger = new Logger("EventHandlers");
 
@@ -40,13 +41,9 @@ export class EventHandlers {
     };
   }
 
-  handle = async (event: any) => {
-    if (!event || typeof event !== "object" || !event.type) {
-      logger.error("Invalid event format", { event });
-      throw new Error("Invalid event format: missing 'type' field");
-    }
+  handle = async (eventType: EventType, event: any) => {
+    logger.info("Handling event", { eventType, event });
 
-    const eventType = event.type as EventType;
     logger.info(`Processing event: ${eventType}`);
 
     try {

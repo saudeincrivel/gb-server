@@ -11,6 +11,23 @@ provider "aws" {
   region = "sa-east-1"
 }
 
+
+variable "ENV_FILE_CONTENT" {
+  description = "Base64-encoded .env content"
+  type        = string
+  default     = ""
+}
+
+locals {
+  env_vars = var.ENV_FILE_CONTENT != "" ? tomap({
+    for pair in regexall("([A-Za-z_][A-Za-z0-9_]*)=(.*)", base64decode(var.ENV_FILE_CONTENT)) :
+    trim(pair[0], " ") => regex(
+      "^(?:[\"']?)(.*?)(?:[\"']?)$",
+      trim(pair[1], " ")
+    )[0]
+  }) : {}
+}
+
 # API Gateway HTTP API
 resource "aws_apigatewayv2_api" "gb_server" {
   name          = "gb-server-api"
@@ -109,14 +126,10 @@ resource "aws_lambda_function" "gb_server" {
   lifecycle { ignore_changes = [image_uri] }
 
   environment {
-    variables = {
+    variables = merge(local.env_vars, {
       NODE_ENV = "production"
       TEST_ENV = "true"
-
-      ECR_REPO_NAME        = "gb-server"
-      LAMBDA_FUNCTION_NAME = "gb-server"
-      MEDIA_BUCKET_NAME    = aws_s3_bucket.media_bucket.bucket
-    }
+    })
   }
 
   depends_on = [
