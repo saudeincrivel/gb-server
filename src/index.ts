@@ -9,12 +9,13 @@ import { EventType } from "./events/types/event-type";
 const logger = new Logger("lambda.index");
 
 (async () => {
+  const lambdaEvent = safeParseJson(
+    Bun.env.AWS_LAMBDA_EVENT || "{}",
+    {} as any
+  );
+
   try {
-    const lambdaEvent = safeParseJson(
-      Bun.env.AWS_LAMBDA_EVENT || "{}",
-      {} as any
-    );
-    logger.info("Gb server Lambda started lambda event: v10 ", lambdaEvent);
+    logger.info("Gb server Lambda started lambda event: v11 ", lambdaEvent);
     const db = await getDatabase();
     const factory = new EventHandlers(db);
 
@@ -52,8 +53,20 @@ const logger = new Logger("lambda.index");
 
     logger.info("Returning response to bun code: Response: ", response);
 
+    // Extract origin from request headers if available
+    const requestHeaders = lambdaEvent.headers || {};
+    const origin = requestHeaders.origin || requestHeaders.Origin || "*";
+
     const result = {
       statusCode: 200,
+      headers: {
+        "Access-Control-Allow-Origin": origin,
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "Access-Control-Allow-Headers":
+          "Content-Type, Authorization, X-Amz-Date, X-Api-Key, X-Amz-Security-Token",
+        "Access-Control-Max-Age": "300",
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify(response),
     };
 
@@ -65,8 +78,19 @@ const logger = new Logger("lambda.index");
     process.exit(0);
   } catch (error) {
     logger.error("Error: ", error);
+    const requestHeaders = lambdaEvent.headers || {};
+    const origin = requestHeaders.origin || requestHeaders.Origin || "*";
+
     const errorResult = {
       statusCode: 500,
+      headers: {
+        "Access-Control-Allow-Origin": origin,
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "Access-Control-Allow-Headers":
+          "Content-Type, Authorization, X-Amz-Date, X-Api-Key, X-Amz-Security-Token",
+        "Access-Control-Max-Age": "300",
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({
         error: error instanceof Error ? error.message : String(error),
       }),

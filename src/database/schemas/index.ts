@@ -58,11 +58,20 @@ export interface Email {
   createdAt: Date;
 }
 
+export interface Campaign {
+  _id?: ObjectId;
+  id: string;
+  count: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 // Collection names
 export const COLLECTIONS = {
   POSTS: "posts",
   ADMIN: "admin",
   SUBSCRIPTIONS: "subscriptions",
   SOCIALS: "socials",
-  EMAILS: "emails"
+  EMAILS: "emails",
+  CAMPAIGNS: "campaigns"
 };

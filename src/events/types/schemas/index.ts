@@ -72,3 +72,8 @@ export interface NewsletterSubscribeEvent extends BaseEvent {
   email: string;
   name?: string;
 }
+
+// Campaign related event schemas
+export interface ClickCountEvent extends BaseEvent {
+  id: string;
+}

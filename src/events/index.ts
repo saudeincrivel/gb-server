@@ -3,6 +3,7 @@ import { Logger } from "../common/logs/logger";
 import { AdminConnectHandler } from "./admin/admin-connect";
 import { NewsletterSubscribeHandler } from "./news-letter/newsletter-subscribe";
 import { GetMediaHandler } from "./media/get-media";
+import { ClickCountHandler } from "./campaigns/click-count";
 import { PostCreateHandler } from "./posts/post-create";
 import { PostGetHandler } from "./posts/post-get";
 import { PostUpdateHandler } from "./posts/post-update";
@@ -38,6 +39,9 @@ export class EventHandlers {
 
       // Newsletter related handlers
       [EventType.NEWSLETTER_SUBSCRIBE]: new NewsletterSubscribeHandler(db),
+
+      // Campaign related handlers
+      [EventType.CLICK_COUNT]: new ClickCountHandler(db),
     };
   }
 

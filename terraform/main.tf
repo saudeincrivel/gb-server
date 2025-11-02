@@ -35,7 +35,7 @@ resource "aws_apigatewayv2_api" "gb_server" {
 
   cors_configuration {
     allow_origins = ["*"]
-    allow_methods = ["POST"]
+    allow_methods = ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
     allow_headers = ["content-type", "x-amz-date", "authorization", "x-api-key", "x-amz-security-token"]
     max_age      = 300
   }

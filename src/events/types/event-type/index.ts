@@ -14,6 +14,9 @@ export enum EventType {
   ADMIN_CONNECT = "admin_connect",
   
   // Newsletter related events
-  NEWSLETTER_SUBSCRIBE = "newsletter_subscribe"
+  NEWSLETTER_SUBSCRIBE = "newsletter_subscribe",
+  
+  // Campaign related events
+  CLICK_COUNT = "click_count"
 }
  
